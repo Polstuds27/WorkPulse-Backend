@@ -2,8 +2,8 @@ export function roundTime(timeStr) {
   let [hourMin, ampm] = timeStr.toLowerCase().split(/(am|pm)/).filter(Boolean);
   let [hour, min] = hourMin.split(":").map(Number);
 
-  if (min <= 15) min = 0;
-  else if (min <= 44) min = 30;
+  if (min <= 10) min = 0;
+  else if (min <= 40) min = 30;
   else {
     min = 0;
     hour += 1;
