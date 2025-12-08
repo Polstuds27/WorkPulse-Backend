@@ -1,5 +1,5 @@
 import {db} from "firebase-admin/database";
-import { normalizeDate, normalizeName } from "../utils/util-functions";
+import { normalizeDate, normalizeName } from "../utils/util-functions.js";
 
 export async function saveWorkerTime(workers) {
   const updates = {};
