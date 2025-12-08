@@ -1,4 +1,4 @@
-import {db} from "firebase-admin/database";
+import {db} from "../firebase/firebase-config.js";
 import { normalizeDate, normalizeName } from "../utils/util-functions.js";
 
 export async function saveWorkerTime(workers) {
