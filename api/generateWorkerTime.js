@@ -1,40 +1,17 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
-import express from "express";
-import {db} from "../firebase/firebase-config.js";
+import { cleanJSON, roundWorkersTimes,  } from "../utils/util-functions.js";
+import { saveWorkerTime } from "../firebase/services.js";
 
-const app = express();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 
-// Rounding function
-function roundTime(timeStr) {
-  let [hourMin, ampm] = timeStr.toLowerCase().split(/(am|pm)/).filter(Boolean);
-  let [hour, min] = hourMin.split(":").map(Number);
 
-  if (min <= 15) min = 0;
-  else if (min <= 44) min = 30;
-  else {
-    min = 0;
-    hour += 1;
-    if (hour > 12) hour -= 12;
-  }
-
-  const pad = n => n.toString().padStart(2, "0");
-  return `${hour}:${pad(min)}${ampm}`;
-}
-
-// Clean AI output
-function cleanJSON(str) {
-  return str.replace(/```json/gi, "").replace(/```/g, "").trim();
-}
-
-// Call Gemini to extract raw times
-async function getRawWorkers(text_req) {
+async function getRawWorkers(textRequest) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
   const prompt = `
 Extract all worker names, date, timein, and timeout from this text in JSON:
-${text_req}
+${textRequest}
 Return ONLY JSON with this structure:
 {
   "workers": [
@@ -48,75 +25,37 @@ Do NOT round times. Do NOT include markdown or explanations.
   return JSON.parse(cleanJSON(result.response.text()));
 }
 
-function roundWorkersTimes(workers) {
-  return workers.map(w => ({
-    ...w,
-    timein: roundTime(w.timein),
-    timeout: roundTime(w.timeout),
-  }));
-}
 
-function normalizeName(name) {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "_")
-    .replace(/[.#$[\]]/g, "");
-}
+export default async function generateWorkerTimeHandler(req, res){
+  
+  res.setHeader("Access-Control-Allow-Origin", "*"); 
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-function normalizeDate(date) {
-  // converts "07/27/25" → "2025-07-27"
-  const [mm, dd, yy] = date.split("/");
-  return `20${yy}-${mm}-${dd}`;
-}
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-async function saveWorkerTime(workers) {
-  const updates = {};
+  if(req.method !== "POST"){
+    return res.status(405).json({ error: "Method not allowed!" }); 
+  }
 
-  workers.forEach(w => {
-    const name = normalizeName(w.name);        // armani → armani
-    const date = normalizeDate(w.date);        // "07/27/25" → "2025-07-27"
+  const {textRequest} = req.body;
 
-    updates[`time_records/${name}/${date}`] = {
-      timeIn: w.timein,
-      timeOut: w.timeout,
-      originalName: w.name
-    };
-  });
-
-  console.log("Updates to be sent to Firebase:", updates); // debug
-  await db.ref().update(updates);
-  console.log("Worker times saved!");
-}
+  if(!textRequest){
+    return res.status(400).json({error: "Request cannot be empty!"});
+  }
 
 
-app.get("/api", async (req, res) => {
   try {
-    const text_req = `July 30 2025
-        Timein: 8:45am
-        Timeout: 11:27pm
-        armani
-        jayson
-        robert
-        kalo
-        geybin
-        handsel
-        paul
-        obet`;
-    console.time("gen");
-    const rawWorkers = await getRawWorkers(text_req);
-    console.timeEnd("gen");
-    const workersArray = rawWorkers.workers
+    
+    const rawWorkers = await getRawWorkers(textRequest);
+    const workersArray = rawWorkers.workers;
     const roundedWorkers = roundWorkersTimes(workersArray);
     await saveWorkerTime(roundedWorkers);
-    // for save dtr
-    res.status(200).json({ workers: roundedWorkers, message: "Success!" });
+
+    res.status(200).json({ workers: roundedWorkers});
   } catch (error) {
-    console.error("AI error:", error);
     res.status(500).json({ error: "AI processing failed" });
   }
-});
-
-app.listen(5001, () => {
-  console.log("Server started on port 5001");
-});
+}
