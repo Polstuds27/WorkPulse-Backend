@@ -8,7 +8,7 @@ export async function saveWorkerTime(workers,week) {
       const name = normalizeName(w.name);        
       const date = normalizeDate(w.date);
     
-      const intervalId = await generateIntervalId(`time_records/${week}/${name}/${date}/intervalCounter}`);
+      const intervalId = await generateIntervalId(`time_records/${week}/${name}/${date}/intervalCounter`);
 
       updates[`time_records/${week}/${name}/${date}/originalName`] = w.name;
       updates[`time_records/${week}/${name}/${date}/intervals/${intervalId}`] = {
