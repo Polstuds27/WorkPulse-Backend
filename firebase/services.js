@@ -1,21 +1,21 @@
 import {db} from "../firebase/firebase-config.js";
-import { normalizeDate, normalizeName } from "../utils/util-functions.js";
+import { normalizeDate, normalizeName, generateIntervalId } from "../utils/util-functions.js";
 
-export async function saveWorkerTime(workers) {
+export async function saveWorkerTime(workers,week) {
   const updates = {};
 
-  workers.forEach(w => {
-    const name = normalizeName(w.name);        
-    const date = normalizeDate(w.date);        
+    for (const w of workers){
+      const name = normalizeName(w.name);        
+      const date = normalizeDate(w.date);
+    
+      const intervalId = await generateIntervalId(`time_records/${week}/${name}/${date}/intervalCounter}`);
 
-    updates[`time_records/${name}/${date}`] = {
-      timeIn: w.timein,
-      timeOut: w.timeout,
-      originalName: w.name
-    };
-  });
-
-  console.log("Updates to be sent to Firebase:", updates); 
+      updates[`time_records/${week}/${name}/${date}/originalName`] = w.name;
+      updates[`time_records/${week}/${name}/${date}/intervals/${intervalId}`] = {
+      TI: w.timein,
+      TO: w.timeout
+      };
+    }
+    
   await db.ref().update(updates);
-  console.log("Worker times saved!");
 }

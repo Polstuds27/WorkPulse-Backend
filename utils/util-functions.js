@@ -1,3 +1,6 @@
+
+import {db} from "../firebase/firebase-config.js";
+
 export function roundTime(timeStr) {
   let [hourMin, ampm] = timeStr.toLowerCase().split(/(am|pm)/).filter(Boolean);
   let [hour, min] = hourMin.split(":").map(Number);
@@ -37,6 +40,30 @@ export function normalizeName(name) {
 export function normalizeDate(date) {
   const [mm, dd, yy] = date.split("/");
   return `20${yy}-${mm}-${dd}`;
+}
+
+
+export async function generateIntervalId(path){
+    try {
+        const ref = db.ref(path);
+
+        const result = await ref.transaction((currentValue) => {
+            return (currentValue || 0) + 1; 
+        });
+
+        if(!result.committed){
+            throw new Error("Transaction failed while generating interval ID");
+        }
+
+        const newValue = result.snapshot.val();
+        const formatted = String(newValue).padStart(4, "0");
+
+
+        return `int_${formatted}`;
+    } catch (error) {
+        console.error("Error getting intID", error);
+        return;
+    }
 }
 
 

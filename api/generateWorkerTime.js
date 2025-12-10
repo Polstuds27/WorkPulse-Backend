@@ -40,9 +40,9 @@ export default async function generateWorkerTimeHandler(req, res){
     return res.status(405).json({ error: "Method not allowed!" }); 
   }
 
-  const {textRequest} = req.body;
+  const {textRequest, week} = req.body;
 
-  if(!textRequest){
+  if(!textRequest || !week){
     return res.status(400).json({error: "Request cannot be empty!"});
   }
 
@@ -52,7 +52,7 @@ export default async function generateWorkerTimeHandler(req, res){
     const rawWorkers = await getRawWorkers(textRequest);
     const workersArray = rawWorkers.workers;
     const roundedWorkers = roundWorkersTimes(workersArray);
-    await saveWorkerTime(roundedWorkers);
+    await saveWorkerTime(roundedWorkers, week);
 
     res.status(200).json({ workers: roundedWorkers});
   } catch (error) {
