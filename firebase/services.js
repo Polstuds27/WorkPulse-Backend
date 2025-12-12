@@ -5,7 +5,7 @@ export async function saveWorkerTimeRecords(workers,week) {
   const updates = {};
 
     const intervalPromises = workers.map(w =>{
-      generateIntervalId(`time_records/${week}/${normalizeName(w.name)}/${normalizeDate(w.date)}/intervalCounter`);
+      return generateIntervalId(`time_records/${week}/${normalizeName(w.name)}/${normalizeDate(w.date)}/intervalCounter`);
     });
 
     const intervalIds = await Promise.all(intervalPromises);
