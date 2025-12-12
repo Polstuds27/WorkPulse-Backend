@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
 import { cleanJSON, roundWorkersTimes,  } from "../utils/util-functions.js";
-import { saveWorkerTimeRecords, saveWorkerTimeRecords } from "../firebase/services.js";
+import { saveWorkerTimeRecords } from "../firebase/services.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 
