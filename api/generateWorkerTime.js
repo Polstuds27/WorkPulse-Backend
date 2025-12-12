@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
 import { cleanJSON, roundWorkersTimes,  } from "../utils/util-functions.js";
-import { saveWorkerTime } from "../firebase/services.js";
+import { saveWorkerTimeRecords, saveWorkerTimeRecords } from "../firebase/services.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 
@@ -51,7 +51,7 @@ export default async function generateWorkerTimeHandler(req, res){
     const rawWorkers = await getRawWorkers(textRequest);
     const workersArray = rawWorkers.workers;
     const roundedWorkers = roundWorkersTimes(workersArray);
-    await saveWorkerTime(roundedWorkers, week);
+    await saveWorkerTimeRecords(roundedWorkers, week);
 
     res.status(200).json({ workers: roundedWorkers});
   } catch (error) {
