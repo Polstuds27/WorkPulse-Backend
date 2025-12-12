@@ -66,5 +66,57 @@ export async function generateIntervalId(path){
     }
 }
 
+export function calculateHours(timeIn, timeOut){
+  const cleanedTI = parseTime(roundTime(timeIn));
+  const cleanedTO = parseTime(roundTime(timeOut));
+
+  let workedMinutes = 0;
+  if(cleanedTO < cleanedTI) workedMinutes = (24 * 60 - cleanedTI) + cleanedTO 
+  else workedMinutes = cleanedTI - cleanedTO;
+  
+  return workedMinutes / 60;
+}
+
+
+export function calculateOT(hours){
+  const ot = hours - 9;
+  if(hours >= 15) return Math.max(0, ot - 0.5);
+  else return Math.max(0, ot);
+} 
+
+
+export function parseTime(timeStr){
+
+  const [time, period] = timeStr.trim().toLowerCase().split(/\s*(am|pm)\s*/).filter(Boolean);
+
+
+  const [hourStr, minStr] = time.split(":");
+  let hour = parseInt(hourStr);
+  let min = parseInt(minStr);
+
+  if(period === "pm" && hour !== 12) hour+=12;
+  if(period === "am" && hour === 12) hour=0;
+
+  return hour * 60 + min;
+}
+
+export function saveWorkerDTR(timeIn, timeOut){
+
+  const hours = calculateHours(timeIn, timeOut);
+  const OT = calculateOT(hours);
+  
+  let dayEquiv = 0;
+  if(hours > 6) dayEquiv = 1;
+  else if(hours >= 3) dayEquiv = 0.5;
+  else dayEquiv = 0;
+  
+  return {
+    hours,
+    OT,
+    dayEquiv
+  };
+
+}
+
 
 
