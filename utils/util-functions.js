@@ -72,7 +72,7 @@ export function calculateHours(timeIn, timeOut){
 
   let workedMinutes = 0;
   if(cleanedTO < cleanedTI) workedMinutes = (24 * 60 - cleanedTI) + cleanedTO 
-  else workedMinutes = cleanedTI - cleanedTO;
+  else workedMinutes = cleanedTO - cleanedTI;
   
   return workedMinutes / 60;
 }
