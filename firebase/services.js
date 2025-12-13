@@ -17,23 +17,46 @@ export async function saveWorkerTimeRecords(workers,week) {
       const intervalId = intervalIds[i];
 
       const basePath = `time_records/${week}/${name}/${date}`;
+      const dtrPath = `dtr_records/${week}/${name}/${date}`;
+
+      const snapshotTime = await db.ref(basePath).once("value");
+      const existingTimeData = snapshotTime.val || {};
+
+
+      const snapshotDTR = await db.ref(dtrPath).once("value");
+      const existingDTR = snapshotDTR.val || { hours: 0, OT: 0, dayEquiv: 0 };
+
+
+      const displayTI = existingTimeData.displayTI 
+        ? existingTimeData.displayTI < w.timein
+         ? existingTimeData.displayTI 
+         : w.timein 
+         : w.timein;
+
+      const displayTO = existingTimeData.displayTO 
+        ? existingTimeData.displayTO > w.timeout
+         ? existingTimeData.displayTO 
+         : w.timeout 
+         : w.timeout;   
+
+
+
       updates[`${basePath}/originalName`] = w.name.toUpperCase();
-      updates[`${basePath}/displayTI`] = updates[`${basePath}/displayTI`] ?? w.timein;
-      updates[`${basePath}/displayTO`] = w.timeout;
+      updates[`${basePath}/displayTI`] = displayTI;
+      updates[`${basePath}/displayTO`] = displayTO;
       updates[`${basePath}/intervals/${intervalId}`] = {
         TI: w.timein,
         TO: w.timeout
       };
       
-      const dtrPath = `dtr_records/${week}/${name}/${date}`;
-      const existing = updates[dtrPath] ?? { hours: 0, OT: 0, dayEquiv: 0 };
+      
       const newDtr = saveWorkerDTR(w.timein, w.timeout);
 
       updates[dtrPath] = {
-        hours:  existing.hours + newDtr.hours,
-        OT:  existing.OT + newDtr.OT,
-        dayEquiv:  Math.min(existing.dayEquiv + newDtr.dayEquiv, 1),
-      }
+        hours:  existingDTR.hours + newDtr.hours,
+        OT:  existingDTR.OT + newDtr.OT,
+        dayEquiv: existingDTR.dayEquiv >= 1 ? 1 : Math.min(existingDTR.dayEquiv + newDtr.dayEquiv, 1),
+      };
 
     }
 
