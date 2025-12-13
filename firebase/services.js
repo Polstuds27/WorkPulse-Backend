@@ -20,11 +20,11 @@ export async function saveWorkerTimeRecords(workers,week) {
       const dtrPath = `dtr_records/${week}/${name}/${date}`;
 
       const snapshotTime = await db.ref(basePath).once("value");
-      const existingTimeData = snapshotTime.val || {};
+      const existingTimeData = snapshotTime.val() || {};
 
 
       const snapshotDTR = await db.ref(dtrPath).once("value");
-      const existingDTR = snapshotDTR.val || { hours: 0, OT: 0, dayEquiv: 0 };
+      const existingDTR = snapshotDTR.val() || { hours: 0, OT: 0, dayEquiv: 0 };
 
 
       const displayTI = existingTimeData.displayTI 
