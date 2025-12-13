@@ -1,5 +1,5 @@
 import {db} from "../firebase/firebase-config.js";
-import { normalizeDate, normalizeName, generateIntervalId, saveWorkerDTR} from "../utils/util-functions.js";
+import { normalizeDate, normalizeName, generateIntervalId, calculateHours, calculateOT, calculateDayEquiv} from "../utils/util-functions.js";
 
 export async function saveWorkerTimeRecords(workers,week) {
   const updates = {};
@@ -19,11 +19,12 @@ export async function saveWorkerTimeRecords(workers,week) {
       const basePath = `time_records/${week}/${name}/${date}`;
       const dtrPath = `dtr_records/${week}/${name}/${date}`;
 
-      const snapshotTime = await db.ref(basePath).once("value");
+      const [snapshotTime, snapshotDTR] = await Promise.all([
+      db.ref(basePath).once("value"),
+      db.ref(dtrPath).once("value")
+      ]);
+
       const existingTimeData = snapshotTime.val() || {};
-
-
-      const snapshotDTR = await db.ref(dtrPath).once("value");
       const existingDTR = snapshotDTR.val() || { hours: 0, OT: 0, dayEquiv: 0 };
 
 
@@ -46,25 +47,16 @@ export async function saveWorkerTimeRecords(workers,week) {
         TI: w.timein,
         TO: w.timeout
       };
-      
-      
-      const newDtr = saveWorkerDTR(w.timein, w.timeout);
 
       const prevHours = existingDTR.hours;
-      const currentHours = newDtr.hours;
+      const currentHours = calculateHours(w.timein, w.timeout);
 
       const totalHours = prevHours + currentHours;
-      const overtimeThreshold = 9;
-
-      const prevOT = Math.max(0, prevHours - overtimeThreshold);
-      const newOT = Math.max(0, totalHours - overtimeThreshold);
-
-      const updatedOT = newOT - prevOT;
 
       updates[dtrPath] = {
-        hours: totalHours,
-        OT:  existingDTR.OT + updatedOT,
-        dayEquiv: existingDTR.dayEquiv >= 1 ? 1 : Math.min(existingDTR.dayEquiv + newDtr.dayEquiv, 1),
+        hours: totalHours || 0,
+        OT:  calculateOT(totalHours) || 0,
+        dayEquiv: calculateDayEquiv(totalHours) || 0,
       };
 
     }

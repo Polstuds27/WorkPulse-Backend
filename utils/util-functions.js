@@ -82,7 +82,17 @@ export function calculateOT(hours){
   const ot = hours - 9;
   if(hours >= 15) return Math.max(0, ot - 0.5);
   else return Math.max(0, ot);
-} 
+}
+
+export function calculateDayEquiv(hours){
+  let dayEquiv = 0;
+  if(hours > 6) dayEquiv = 1;
+  else if(hours >= 3) dayEquiv = 0.5;
+  else dayEquiv = 0;
+
+  return dayEquiv;
+}
+
 
 
 export function parseTime(timeStr){
@@ -100,23 +110,6 @@ export function parseTime(timeStr){
   return hour * 60 + min;
 }
 
-export function saveWorkerDTR(timeIn, timeOut){
-
-  const hours = calculateHours(timeIn, timeOut);
-  const OT = calculateOT(hours);
-  
-  let dayEquiv = 0;
-  if(hours > 6) dayEquiv = 1;
-  else if(hours >= 3) dayEquiv = 0.5;
-  else dayEquiv = 0;
-  
-  return {
-    hours,
-    OT,
-    dayEquiv
-  };
-
-}
 
 
 //this function returns the date december 12, 2025 to 12/12/2025
