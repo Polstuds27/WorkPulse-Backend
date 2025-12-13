@@ -18,8 +18,8 @@ export async function saveWorkerTimeRecords(workers,week) {
 
       const basePath = `time_records/${week}/${name}/${date}`;
       updates[`${basePath}/originalName`] = w.name.toUpperCase();
-      updates[`${basePath}/dipslayTI`] = updates[`${basePath}/displayTI`] ?? w.timein;
-      updates[`${basePath}/dipslayTO`] = w.timeout;
+      updates[`${basePath}/displayTI`] = updates[`${basePath}/displayTI`] ?? w.timein;
+      updates[`${basePath}/displayTO`] = w.timeout;
       updates[`${basePath}/intervals/${intervalId}`] = {
         TI: w.timein,
         TO: w.timeout
