@@ -10,7 +10,12 @@ export function roundTime(timeStr) {
   else {
     min = 0;
     hour += 1;
-    if (hour > 12) hour -= 12;
+    if (hour > 12) {
+      ampm = ampm === "am" ? "pm" : "am";
+    } else if (hour === 12) {
+      ampm = ampm === "am" ? "pm" : "am";
+    }
+  
   }
 
   const pad = n => n.toString().padStart(2, "0");
