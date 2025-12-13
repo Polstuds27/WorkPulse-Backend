@@ -48,10 +48,10 @@ export async function saveWorkerTimeRecords(workers,week) {
       };
       
       
-      const newDtr = saveWorkerDTR(existingTimeData.displayTI, (w.timeout + existingTimeData.displayTO));
+      const newDtr = saveWorkerDTR(w.timein, w.timeout);
 
       updates[dtrPath] = {
-        hours: newDtr.hours,
+        hours: existingDTR.hours >= 9 ? newDtr.hours : 0,
         OT:  newDtr.OT,
         dayEquiv: existingDTR.dayEquiv >= 1 ? 1 : Math.min(existingDTR.dayEquiv + newDtr.dayEquiv, 1),
       };
