@@ -48,7 +48,7 @@ export async function saveWorkerTimeRecords(workers,week) {
       };
       
       
-      const newDtr = saveWorkerDTR(existingTimeData.timein, (w.timeout + existingTimeData.timeout));
+      const newDtr = saveWorkerDTR(existingTimeData.displayTI, (w.timeout + existingTimeData.displayTO));
 
       updates[dtrPath] = {
         hours: newDtr.hours,
