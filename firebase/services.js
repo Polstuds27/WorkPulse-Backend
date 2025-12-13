@@ -50,9 +50,20 @@ export async function saveWorkerTimeRecords(workers,week) {
       
       const newDtr = saveWorkerDTR(w.timein, w.timeout);
 
+      const prevHours = existingDTR.hours;
+      const currentHours = newDtr.hours;
+
+      const totalHours = prevHours + currentHours;
+      const overtimeThreshold = 9;
+
+      const prevOT = Math.max(0, prevHours - overtimeThreshold);
+      const newOT = Math.max(0, totalHours - overtimeThreshold);
+
+      const updatedOT = newOT - prevOT;
+
       updates[dtrPath] = {
-        hours: existingDTR.hours >= 9 ? newDtr.hours : 0,
-        OT:  newDtr.OT,
+        hours: totalHours,
+        OT:  existingDTR.OT + updatedOT,
         dayEquiv: existingDTR.dayEquiv >= 1 ? 1 : Math.min(existingDTR.dayEquiv + newDtr.dayEquiv, 1),
       };
 
