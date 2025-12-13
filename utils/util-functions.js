@@ -119,4 +119,63 @@ export function saveWorkerDTR(timeIn, timeOut){
 }
 
 
+//this function returns the date december 12, 2025 to 12/12/2025
+function parseDate(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return null;
+
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/` +
+         `${String(d.getDate()).padStart(2, "0")}/` +
+         `${String(d.getFullYear()).slice(-2)}`;
+}
+
+
+function extractTime(prefix, lines) {
+  const line = lines.find(l =>
+    l.trim().toLowerCase().startsWith(prefix)
+  );
+  return line?.split(":").slice(1).join(":").trim() ?? null;
+}
+
+export function parseWorkerRecords(textRequest){
+
+  const lines = textRequest
+    .split(/\r?\n/)
+    .map( l => l.trim())
+    .filter(Boolean);
+
+
+  const dateLine = lines.find( l => 
+    /^[A-Za-z]+\s+\d{1,2}\s+\d{4}$/.test(l)
+  );
+  
+  const date = parseDate(dateLine);
+  const timein = extractTime("timein", lines);
+  const timeout = extractTime("timeout", lines);
+
+  if (!date || !timein || !timeout) {
+    return { workers: [], error: "Input could not be parsed" };
+  }
+
+  const timeoutIndex = lines.findIndex(l =>
+    l.toLowerCase().startsWith("timeout")
+  );
+
+  const workers = lines
+    .slice(timeoutIndex + 1)
+    .filter(l => /^[a-zA-Z]+$/.test(l))
+    .map(name => ({
+      name,
+      date,
+      timein,
+      timeout
+    }));
+
+   return workers.length
+    ? { workers }
+    : { workers: [], error: "Input could not be parsed" };  
+
+}
+
+
 
