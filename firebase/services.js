@@ -28,18 +28,16 @@ export async function saveWorkerTimeRecords(workers,week) {
 
 
       const displayTI = existingTimeData.displayTI 
-        ? existingTimeData.displayTI < w.timein
+        ? existingTimeData.displayTI > w.timein
          ? existingTimeData.displayTI 
          : w.timein 
          : w.timein;
 
       const displayTO = existingTimeData.displayTO 
-        ? existingTimeData.displayTO > w.timeout
+        ? existingTimeData.displayTO < w.timeout
          ? existingTimeData.displayTO 
          : w.timeout 
          : w.timeout;   
-
-
 
       updates[`${basePath}/originalName`] = w.name.toUpperCase();
       updates[`${basePath}/displayTI`] = displayTI;
