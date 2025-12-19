@@ -1,5 +1,5 @@
 import {db} from "../firebase/firebase-config.js";
-import { normalizeDate, normalizeName, generateIntervalId, calculateHours, calculateOT, calculateDayEquiv} from "../utils/util-functions.js";
+import { normalizeDate, normalizeName, calculateHours, calculateOT, calculateDayEquiv} from "../utils/util-functions.js";
 
 export async function saveWorkerTimeRecords(workers,week) {
   const updates = {};
@@ -8,7 +8,7 @@ export async function saveWorkerTimeRecords(workers,week) {
   /**
    * 
    * TODO 
-   * 1: DITCH INTERVALS THEY SUCK
+   * 1: DITCH INTERVALS THEY SUCK /
    * 2: DO UDPATE
    * 3: DO DELETION
    * 4: DO USER AUTH
@@ -20,7 +20,6 @@ export async function saveWorkerTimeRecords(workers,week) {
       const w = workers[i];
       const name = normalizeName(w.name);
       const date = normalizeDate(w.date);
-      const intervalId = intervalIds[i];
 
       const basePath = `time_records/${week}/${name}/${date}`;
       const dtrPath = `dtr_records/${week}/${name}/${date}`;
