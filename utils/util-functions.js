@@ -120,7 +120,7 @@ export function parseWorkerRecords(textRequest){
 
 
   const dateLine = lines.find( l => 
-    /^[A-Za-z]+\s+\d{1,2}\s+\d{4}$/.test(l)
+    /^[A-Za-z]+\s+\d{1,2},?\s+\d{4}$/.test(l)
   );
   
   const date = parseDate(dateLine);
