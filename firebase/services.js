@@ -4,11 +4,17 @@ import { normalizeDate, normalizeName, generateIntervalId, calculateHours, calcu
 export async function saveWorkerTimeRecords(workers,week) {
   const updates = {};
 
-    const intervalPromises = workers.map(w =>{
-      return generateIntervalId(`time_records/${week}/${normalizeName(w.name)}/${normalizeDate(w.date)}/intervalCounter`);
-    });
 
-    const intervalIds = await Promise.all(intervalPromises);
+  /**
+   * 
+   * TODO 
+   * 1: DITCH INTERVALS THEY SUCK
+   * 2: DO UDPATE
+   * 3: DO DELETION
+   * 4: DO USER AUTH
+   * 5: TESTING
+   */
+
 
     for(let i = 0; i < workers.length; i++){
       const w = workers[i];
@@ -43,10 +49,6 @@ export async function saveWorkerTimeRecords(workers,week) {
       updates[`${basePath}/originalName`] = w.name.toUpperCase();
       updates[`${basePath}/displayTI`] = displayTI;
       updates[`${basePath}/displayTO`] = displayTO;
-      updates[`${basePath}/intervals/${intervalId}`] = {
-        TI: w.timein,
-        TO: w.timeout
-      };
 
       const prevHours = existingDTR.hours;
       const currentHours = calculateHours(w.timein, w.timeout);

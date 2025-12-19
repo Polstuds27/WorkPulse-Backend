@@ -47,30 +47,6 @@ export function normalizeDate(date) {
   return `20${yy}-${mm}-${dd}`;
 }
 
-
-export async function generateIntervalId(path){
-    try {
-        const ref = db.ref(path);
-
-        const result = await ref.transaction((currentValue) => {
-            return (currentValue || 0) + 1; 
-        });
-
-        if(!result.committed){
-            throw new Error("Transaction failed while generating interval ID");
-        }
-
-        const newValue = result.snapshot.val();
-        const formatted = String(newValue).padStart(4, "0");
-
-
-        return `int_${formatted}`;
-    } catch (error) {
-        console.error("Error getting intID", error);
-        return;
-    }
-}
-
 export function calculateHours(timeIn, timeOut){
   const cleanedTI = parseTime(roundTime(timeIn));
   const cleanedTO = parseTime(roundTime(timeOut));
