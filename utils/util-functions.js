@@ -60,9 +60,13 @@ export function calculateHours(timeIn, timeOut){
 
 
 export function calculateOT(hours){
-  const ot = hours - 9;
-  if(hours >= 13) return Math.max(0, ot - 0.5);
-  else return Math.max(0, ot);
+  let ot = hours - 9;
+
+  if (ot >= 4.5) {
+    ot -= 0.5;
+  }
+
+  return Math.max(0, ot);
 }
 
 export function calculateDayEquiv(hours){
