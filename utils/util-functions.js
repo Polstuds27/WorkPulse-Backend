@@ -68,7 +68,7 @@ export function calculateOT(hours){
 export function calculateDayEquiv(hours){
   let dayEquiv = 0;
   if(hours > 6) dayEquiv = 1;
-  else if(hours >= 3) dayEquiv = 0.5;
+  else if(hours >= 4) dayEquiv = 0.5;
   else dayEquiv = 0;
 
   return dayEquiv;
