@@ -61,7 +61,7 @@ export function calculateHours(timeIn, timeOut){
 
 export function calculateOT(hours){
   const ot = hours - 9;
-  if(hours >= 15) return Math.max(0, ot - 0.5);
+  if(hours >= 13.5) return Math.max(0, ot - 0.5);
   else return Math.max(0, ot);
 }
 
