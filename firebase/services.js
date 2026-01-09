@@ -58,8 +58,8 @@ export async function saveWorkerTimeRecords(workers,week) {
 
         const endThu = getNextThursday(slicedThu);
         const nextWeek = `${slicedThu}_to_${endThu}`;
-        const nextWeekPathTime = `time_records/${nextWeek}/${name}${date}`;
-        const nextWeekPathDTR = `dtr_records/${nextWeek}/${name}${date}`;
+        const nextWeekPathTime = `time_records/${nextWeek}/${name}/${date}`;
+        const nextWeekPathDTR = `dtr_records/${nextWeek}/${name}/${date}`;
 
         updates[nextWeekPathTime] = {
           originalName: w.name.toUpperCase() || "",
