@@ -84,7 +84,6 @@ export function parseTime(timeStr){
 
   const [time, period] = timeStr.trim().toLowerCase().split(/\s*(am|pm)\s*/).filter(Boolean);
 
-
   const [hourStr, minStr] = time.split(":");
   let hour = parseInt(hourStr);
   let min = parseInt(minStr);
@@ -154,6 +153,18 @@ export function parseWorkerRecords(textRequest){
     : { workers: [], error: "Input could not be parsed" };  
 
 }
+
+
+export function getNextThursday(date){
+  let end = "";
+  const start = new Date(date);
+
+  start.setDate(start.getDate() + 7);
+  end = start;
+  return end.toLocaleDateString('en-CA');
+}
+
+
 
 
 
