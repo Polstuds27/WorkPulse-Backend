@@ -54,25 +54,25 @@ export async function saveWorkerTimeRecords(workers,week) {
       const totalHours = prevHours + currentHours;
 
 
-      if(slicedThu === date){
+        if(slicedThu === date){
 
-        const endThu = getNextThursday(slicedThu);
-        const nextWeek = `${slicedThu}_to_${endThu}`;
-        const nextWeekPathTime = `time_records/${nextWeek}/${name}/${date}`;
-        const nextWeekPathDTR = `dtr_records/${nextWeek}/${name}/${date}`;
+          const endThu = getNextThursday(slicedThu);
+          const nextWeek = `${slicedThu}_to_${endThu}`;
+          const nextWeekPathTime = `time_records/${nextWeek}/${name}/${date}`;
+          const nextWeekPathDTR = `dtr_records/${nextWeek}/${name}/${date}`;
 
-        updates[nextWeekPathTime] = {
-          originalName: w.name.toUpperCase() || "",
-          displayTI: displayTI || "",
-          displayTO: displayTO || ""
-        };
+          updates[nextWeekPathTime] = {
+            originalName: w.name.toUpperCase() || "",
+            displayTI: displayTI || "",
+            displayTO: displayTO || ""
+          };
 
-        updates[nextWeekPathDTR] = {
-          hours: totalHours || 0,
-          OT:  calculateOT(totalHours) || 0,
-          dayEquiv: calculateDayEquiv(totalHours) || 0,
-        };
-      }
+          updates[nextWeekPathDTR] = {
+            hours: totalHours || 0,
+            OT:  calculateOT(totalHours) || 0,
+            dayEquiv: calculateDayEquiv(totalHours) || 0,
+          };
+        }
 
       updates[dtrPath] = {
         hours: totalHours || 0,
