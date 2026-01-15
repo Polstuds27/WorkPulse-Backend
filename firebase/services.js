@@ -1,16 +1,8 @@
 import {db} from "../firebase/firebase-config.js";
 import { normalizeDate, normalizeName, calculateHours, calculateOT, calculateDayEquiv, getNextThursday} from "../utils/util-functions.js";
 
-export async function saveWorkerTimeRecords(workers,week) {
+export async function saveWorkerTimeRecords(workers, week) {
   const updates = {};
-
-  /**
-   * 
-   * TODO 
-   * 3: DO DELETION
-   * 4: DO USER AUTH
-   * 5: TESTING
-   */
 
     for(let i = 0; i < workers.length; i++){
       const w = workers[i];
@@ -83,6 +75,15 @@ export async function saveWorkerTimeRecords(workers,week) {
     }
 
     await db.ref().update(updates);
+
+}
+
+
+
+export async function deleteWorkerTimeRecords(name, week) {
+
+  const path = `time_records/${week}/${name}`;
+  await db.ref(path).remove();
 
 }
 
