@@ -1,5 +1,5 @@
-import { deleteWorkerTimeRecords } from "../firebase/services.js";
-
+import { deleteWorkerTimeRecords } from "../firebase/services.js"; // never forget this .js 
+import "dotenv/config";
 export default async function deleteWorkerHandler(req, res){    
   res.setHeader("Access-Control-Allow-Origin", "*"); 
   res.setHeader("Access-Control-Allow-Methods", "DELETE, OPTIONS");
