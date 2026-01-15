@@ -1,4 +1,4 @@
-import { deleteWorkerTimeRecords } from "../firebase/services";
+import { deleteWorkerTimeRecords } from "../firebase/services.js";
 
 export default async function deleteWorkerHandler(req, res){    
   res.setHeader("Access-Control-Allow-Origin", "*"); 
