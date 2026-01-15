@@ -81,10 +81,10 @@ export async function saveWorkerTimeRecords(workers, week) {
 
 
 export async function deleteWorkerTimeRecords(name, week) {
-
-  const path = `time_records/${week}/${name}`;
-  await db.ref(path).remove();
-
+  const batchDelete = {}
+  batchDelete[`time_records/${week}/${name}`] = null;
+  batchDelete[`dtr_records/${week}/${name}`] = null;
+  await db.ref().update(batchDelete);
 }
 
 
